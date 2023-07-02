@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import asyncio
 from os import environ
 
-from click import Context, group, pass_context
+from click import group
 
 from bot.core import IncandescentBot
 
@@ -30,12 +30,15 @@ async def run_bot() -> None:
         await bot.start(token)
 
 
-@group(invoke_without_command=True, options_metavar="[options]")
-@pass_context
-def main(ctx: Context) -> None:
-    """Launcher for the bot."""
-    if ctx.invoked_subcommand is None:
-        asyncio.run(run_bot())
+@group()
+def main() -> None:
+    pass
+
+
+@main.command()
+def runbot() -> None:
+    """Run the bot."""
+    asyncio.run(run_bot())
 
 
 if __name__ == "__main__":

@@ -1,17 +1,16 @@
-version: '3.9'
-
 services:
-  database:
-    env_file:
-      - ./config/.env
   bot:
-    env_file:
-      - ./config/.env
-    volumes:
-      - .:/app
-    environment:
-      - BOT_ENV=development
     build:
+      target: development_build
       args:
+        - BOT_ENV=development
         - UID=${UID:-1000}
         - GID=${GID:-1000}
+    volumes:
+      - .:/app
+    env_file:
+      - config/.env
+
+  database:
+    env_file:
+      - config/.env
