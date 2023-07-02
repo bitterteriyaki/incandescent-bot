@@ -73,6 +73,10 @@ class IncandescentBot(commands.Bot):
     def guild(self) -> Guild:
         return cast(Guild, self.get_guild(GUILD_ID))
 
+    @cached_property
+    def env(self) -> str:
+        return environ["BOT_ENV"]
+
 
 async def get_prefix(bot: IncandescentBot, message: Message) -> str:
     """Get the prefix for the bot.

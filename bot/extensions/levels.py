@@ -16,25 +16,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from random import randint
-from typing import cast
+from typing import Dict, cast
 
-from discord import Member, Message
+from discord import Member, Message, Role, TextChannel
 from discord.ext import commands
+from discord.ext.commands import (  # type: ignore
+    BucketType,
+    Cog,
+    CooldownMapping,
+)
 from sqlalchemy import insert, select, update
 
 from bot.core import IncandescentBot
+from bot.utils.constants import LEVELS_MAPPING, TEST_CHANNEL_ID
 from bot.utils.database import LevelUser
 from bot.utils.embed import create_embed
 
 
-class Levels(commands.Cog):
+class Levels(Cog):
     """Ranking system for the bot."""
 
     def __init__(self, bot: IncandescentBot) -> None:
         self.bot = bot
-        self.cooldown = commands.CooldownMapping.from_cooldown(
-            1, 60, commands.BucketType.user
-        )
+        self.cooldown = CooldownMapping.from_cooldown(1, 60, BucketType.user)
 
     def get_level_exp(self, level: int) -> int:
         return 5 * (level**2) + (50 * level) + 100
@@ -78,8 +82,19 @@ class Levels(commands.Cog):
         return result.exp if result is not None else 0
 
     @commands.Cog.listener()
+    async def on_ready(self) -> None:
+        self.mapping = cast(
+            Dict[int, Role],
+            {k: self.bot.guild.get_role(v) for k, v in LEVELS_MAPPING.items()},
+        )
+
+    @commands.Cog.listener()
     async def on_regular_message(self, message: Message) -> None:
         author = cast(Member, message.author)
+        channel = cast(TextChannel, message.channel)
+
+        if self.bot.env == "development" and channel.id != TEST_CHANNEL_ID:
+            return
 
         current_exp = await self.get_experience(author.id, insert=True)
         current_level = self.get_level_from_exp(current_exp)
@@ -96,6 +111,10 @@ class Levels(commands.Cog):
         new_level = self.get_level_from_exp(new_exp)
 
         if new_level != current_level:
+            if new_level in self.mapping:
+                await author.remove_roles(*self.mapping.values())
+                await author.add_roles(self.mapping[new_level])
+
             content = (
                 f"Parabéns, {author.mention}! Você subiu para o "
                 f"**nível {new_level}**!"
