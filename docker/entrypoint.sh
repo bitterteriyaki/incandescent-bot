@@ -12,7 +12,7 @@ readonly cmd="$*"
 # We need this line to make sure that this container is started after the one
 # with PostgreSQL:
 dockerize \
-  -wait "tcp://${DJANGO_DATABASE_HOST}:${DJANGO_DATABASE_PORT}" \
+  -wait "tcp://${POSTGRES_HOST}:${POSTGRES_PORT}" \
   -timeout 90s
 
 # It is also possible to wait for other services as well: Redis, Elastic,

@@ -1,8 +1,3 @@
-# This file is ignored in production, but
-# it is automatically picked up in development with:
-#
-#  $ docker-compose up
-
 version: '3.9'
 
 services:
@@ -13,10 +8,10 @@ services:
     env_file:
       - ./config/.env
     volumes:
-      # We only mount source code in development:
       - .:/app
+    environment:
+      - BOT_ENV=development
     build:
       args:
-        # Needed for fixing permissions of files created by Docker:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
