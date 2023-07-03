@@ -1,38 +1,34 @@
-# Default compose file for development and production.
-# Should be used directly in development.
-# Automatically loads `docker-compose.override.yml` if it exists.
-
 version: '3.9'
 
 services:
-  database:
-    image: postgres:15.3-alpine
-    restart: unless-stopped
-    volumes:
-      - postgresql:/var/lib/postgresql/data
-    networks:
-      - botnet
   bot:
-    image: 'incandescent-bot:dev'
+    image: incandescent-bot:dev
+    container_name: bot
     build:
-      target: development_build
       context: .
-      dockerfile: ./docker/Dockerfile
-      args:
-        - BOT_ENV=development
+      dockerfile: docker/Dockerfile
+      target: development
       cache_from:
         - "incandescent-bot:dev"
         - "incandescent-bot:latest"
         - "*"
-    depends_on:
-      - database
+    volumes:
+      - .:/bot
     networks:
-      - botnet
+      - main
+    command: python manage.py runbot
 
-    command: python launcher.py
+  database:
+    image: postgres:15.3-alpine
+    container_name: database
+    restart: unless-stopped
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    networks:
+      - main
 
 networks:
-  botnet:
+  main:
 
 volumes:
   postgresql:

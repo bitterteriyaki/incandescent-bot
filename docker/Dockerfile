@@ -4,11 +4,10 @@
 FROM python:3.11.4-slim-buster AS development_build
 
 ARG BOT_ENV \
-  # Needed for fixing permissions of files created by Docker:
   UID=1000 \
   GID=1000
 
-ENV DJANGO_ENV=${DJANGO_ENV} \
+ENV BOT_ENV=${BOT_ENV} \
   # Python:
   PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
@@ -19,7 +18,7 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   PIP_DISABLE_PIP_VERSION_CHECK=1 \
   PIP_DEFAULT_TIMEOUT=100 \
   # Poetry:
-  POETRY_VERSION=1.3.1 \
+  POETRY_VERSION=1.5.1 \
   POETRY_NO_INTERACTION=1 \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry' \
@@ -27,7 +26,7 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   # Tini
   TINI_VERSION=v0.19.0 \
   # Dockerize:
-  DOCKERIZE_VERSION=v0.6.1
+  DOCKERIZE_VERSION=v0.7.0
 
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
@@ -90,4 +89,4 @@ ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
 
 FROM development_build AS production_build
 
-COPY --chown=web:web . /app
+COPY --chown=web:web . /app/

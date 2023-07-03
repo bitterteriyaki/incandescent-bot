@@ -15,28 +15,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import asyncio
-from os import environ
-
-from click import Context, group, pass_context
-
-from bot.core import IncandescentBot
+from os import walk
+from os.path import splitext
+from typing import List
 
 
-async def run_bot() -> None:
-    token = environ["DISCORD_TOKEN"]
+def get_extensions(*, path: str = "bot/extensions") -> List[str]:
+    extensions: list[str] = []
 
-    async with IncandescentBot() as bot:
-        await bot.start(token)
+    for root, _, files in walk(path):
+        for file in files:
+            filename, ext = splitext(file)
 
+            if ext != ".py":
+                continue
 
-@group(invoke_without_command=True, options_metavar="[options]")
-@pass_context
-def main(ctx: Context) -> None:
-    """Launcher for the bot."""
-    if ctx.invoked_subcommand is None:
-        asyncio.run(run_bot())
+            root = root.replace("/", ".")
+            extensions.append(f"{root}.{filename}")
 
-
-if __name__ == "__main__":
-    main()
+    return extensions
