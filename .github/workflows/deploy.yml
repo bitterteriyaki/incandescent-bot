@@ -16,7 +16,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
-            cd unbot
+            cd incandescent-bot
             git pull
             docker compose down
             docker compose up -d --build
