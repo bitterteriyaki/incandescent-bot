@@ -1,0 +1,10 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: production_build
+      args:
+        - BOT_ENV=production
+    environment:
+      - POSTGRES_HOST

@@ -16,8 +16,6 @@ services:
       - .:/bot
     networks:
       - main
-    env_file:
-      - config/.env
     command: python manage.py runbot
 
   database:

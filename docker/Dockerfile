@@ -89,4 +89,4 @@ ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
 
 FROM development_build AS production_build
 
-COPY --chown=web:web . /app
+COPY --chown=web:web . /app/
