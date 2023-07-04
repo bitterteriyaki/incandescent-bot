@@ -1,9 +1,11 @@
 name: Deployment
 
 on:
-  push:
-    branches:
-      - develop
+  workflow_run:
+    workflows:
+      - Publish Docker image
+    types:
+      - completed
 
 jobs:
   deployment:
