@@ -21,7 +21,7 @@ from typing import List
 
 
 def get_extensions(*, path: str = "bot/extensions") -> List[str]:
-    extensions: list[str] = []
+    extensions: List[str] = []
 
     for root, _, files in walk(path):
         for file in files:
