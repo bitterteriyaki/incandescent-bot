@@ -25,7 +25,7 @@ jobs:
           script: |
             docker stop $(docker ps -a -q)
             docker pull ghcr.io/bitterteriyaki/incandescent-bot:latest
-            docker run --rm -it -d \
+            docker run -it -d \
               -e DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}" \
               -e POSTGRES_HOST="${{ secrets.POSTGRES_HOST }}" \
               -e POSTGRES_PORT="${{ secrets.POSTGRES_PORT }}" \
