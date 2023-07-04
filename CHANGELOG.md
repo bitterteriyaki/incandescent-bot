@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.3 (2023-07-04)
+
+### Fix
+
+- **ci**: do not remover docker container after running it
+
 ## 0.5.2 (2023-07-04)
 
 ### Fix
