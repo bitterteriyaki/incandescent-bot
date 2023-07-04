@@ -17,13 +17,6 @@ jobs:
 
       - name: Build and deploy
         uses: appleboy/ssh-action@v0.1.10
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         with:
           key: ${{ secrets.SSH_KEY }}
           host: ${{ secrets.SSH_HOST }}
@@ -33,11 +26,11 @@ jobs:
             docker stop $(docker ps -a -q)
             docker pull ghcr.io/bitterteriyaki/incandescent-bot:latest
             docker run --rm -it -d \
-              -e DISCORD_TOKEN \
-              -e POSTGRES_HOST \
-              -e POSTGRES_PORT \
-              -e POSTGRES_DB \
-              -e POSTGRES_USER \
-              -e POSTGRES_PASSWORD \
+              -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
+              -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+              -e POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+              -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+              -e POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+              -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
               ghcr.io/bitterteriyaki/incandescent-bot:latest \
               python manage.py runbot
