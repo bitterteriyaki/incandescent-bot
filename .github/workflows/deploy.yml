@@ -30,6 +30,14 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            docker compose -f docker/docker-compose.yml down
-            docker compose -f docker/docker-compose.yml build
-            docker compose -f docker/docker-compose.yml up -d
+            docker stop $(docker ps -a -q)
+            docker pull ghcr.io/bitterteriyaki/incandescent-bot:latest
+            docker run --rm -it -d \
+              -e DISCORD_TOKEN \
+              -e POSTGRES_HOST \
+              -e POSTGRES_PORT \
+              -e POSTGRES_DB \
+              -e POSTGRES_USER \
+              -e POSTGRES_PASSWORD \
+              ghcr.io/bitterteriyaki/incandescent-bot:latest \
+              python manage.py runbot
