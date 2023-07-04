@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 (2023-07-04)
+
+- **ci**: finish deployment ci
+
 ## 0.3.0 (2023-07-04)
 
 - **ci**: add deploy ci
