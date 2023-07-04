@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0 (2023-07-04)
+
+### Feat
+
+- add rotating logs to bot
+
 ## 0.5.3 (2023-07-04)
 
 ### Fix
