@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import logging
 from os import environ
 from typing import Any, Type, Union, cast
 
@@ -30,6 +31,8 @@ from bot.utils.extensions import get_extensions
 
 environ["JISHAKU_NO_UNDERSCORE"] = "true"
 environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
+
+log = logging.getLogger(__name__)
 
 
 class IncandescentBot(commands.Bot):
@@ -58,7 +61,7 @@ class IncandescentBot(commands.Bot):
 
     async def on_ready(self) -> None:
         user = cast(ClientUser, self.user)
-        print(f"Logged in as {user} ({user.id})")
+        log.info(f"Logged in as '{user}' ({user.id})")
 
     async def on_message(self, message: Message) -> None:
         author = message.author

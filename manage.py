@@ -16,11 +16,48 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import asyncio
+import logging
+from contextlib import contextmanager
+from logging.handlers import RotatingFileHandler
 from os import environ
 
 from click import group
 
 from bot.core import IncandescentBot
+
+
+@contextmanager
+def setup_logging():
+    log = logging.getLogger()
+
+    try:
+        # __enter__
+        max_bytes = 32 * 1024 * 1024  # 32 MiB
+
+        logging.getLogger("discord").setLevel(logging.INFO)
+        logging.getLogger("discord.http").setLevel(logging.WARN)
+
+        datetime_format = r"%Y-%m-%d %H:%M:%S"
+        log_format = "[{asctime}] [{levelname}] {name}: {message}"
+        log.setLevel(logging.INFO)
+
+        file_handler = RotatingFileHandler(
+            filename="logs/incandescentbot.log",
+            encoding="utf-8",
+            maxBytes=max_bytes,
+            backupCount=5,
+        )
+        formatter = logging.Formatter(log_format, datetime_format, style="{")
+
+        file_handler.setFormatter(formatter)
+        log.addHandler(file_handler)
+
+        yield
+    finally:
+        # __exit__
+        for handler in log.handlers:
+            handler.close()
+            log.removeHandler(handler)
 
 
 async def run_bot() -> None:
@@ -38,7 +75,8 @@ def main() -> None:
 @main.command()
 def runbot() -> None:
     """Run the bot."""
-    asyncio.run(run_bot())
+    with setup_logging():
+        asyncio.run(run_bot())
 
 
 if __name__ == "__main__":
