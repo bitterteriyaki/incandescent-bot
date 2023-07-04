@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 (2023-07-04)
+
+### Fix
+
+- **ci**: fix ci environments variables
+
 ## 0.5.0 (2023-07-04)
 
 ### Fix
