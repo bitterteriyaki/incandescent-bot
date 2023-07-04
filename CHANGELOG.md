@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.2 (2023-07-04)
+
+### Fix
+
+- **ci**: add quotes to environments
+
 ## 0.5.1 (2023-07-04)
 
 ### Fix
