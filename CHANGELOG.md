@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 (2023-07-04)
+
+### Feat
+
+- remove logs folder from the project
+
 ## 0.6.0 (2023-07-04)
 
 ### Feat
