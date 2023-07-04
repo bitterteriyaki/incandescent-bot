@@ -56,14 +56,14 @@ RUN apt-get update && apt-get upgrade -y \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /bot
 
 RUN groupadd -g "${GID}" -r bot \
-  && useradd -d '/app' -g bot -l -r -u "${UID}" bot \
-  && chown bot:bot -R '/app'
+  && useradd -d '/bot' -g bot -l -r -u "${UID}" bot \
+  && chown bot:bot -R '/bot'
 
 # Copy only requirements, to cache them in Docker layer.
-COPY --chown=web:web ./poetry.lock ./pyproject.toml /app/
+COPY --chown=web:web ./poetry.lock ./pyproject.toml /bot/
 
 # Project initialization:
 RUN --mount=type=cache,target="$POETRY_CACHE_DIR" \
@@ -89,4 +89,4 @@ ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
 
 FROM development_build AS production_build
 
-COPY --chown=web:web . /app/
+COPY --chown=web:web . /bot/
