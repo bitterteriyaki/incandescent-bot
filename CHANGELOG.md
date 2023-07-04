@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 (2023-07-04)
+
+### Fix
+
+- **ci**: fix deployment ci
+
 ## 0.4.0 (2023-07-04)
 
 - **ci**: finish deployment ci
