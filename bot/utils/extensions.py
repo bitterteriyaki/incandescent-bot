@@ -21,6 +21,19 @@ from typing import List
 
 
 def get_extensions(*, path: str = "bot/extensions") -> List[str]:
+    """Returns a list of extensions in the given path. Extensions are
+    files that end with ``.py``.
+
+    Parameters
+    ----------
+    path: :class:`str`
+        The path to search for extensions in.
+
+    Returns
+    -------
+    List[:class:`str`]
+        A list of extensions in the given path.
+    """
     extensions: List[str] = []
 
     for root, _, files in walk(path):
