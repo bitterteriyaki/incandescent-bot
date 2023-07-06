@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from os import environ
 
-from sqlalchemy import BigInteger, Column
+from sqlalchemy import BigInteger, Column, DateTime, String
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase
 
@@ -43,3 +43,15 @@ class LevelUser(Base):
 
     user_id = Column(BigInteger, primary_key=True)
     exp = Column(BigInteger, default=0)
+
+
+class DiscordMessage(Base):
+    """Represents a Discord message."""
+
+    __tablename__ = "messages"
+
+    message_id = Column(BigInteger, primary_key=True)
+    author_id = Column(BigInteger)
+    channel_id = Column(BigInteger)
+    content = Column(String)
+    created_at = Column(DateTime)

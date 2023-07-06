@@ -19,7 +19,7 @@ import logging
 from os import environ
 from typing import Any, Type, Union, cast
 
-from discord import ClientUser, Guild, Intents, Interaction, Message, Webhook
+from discord import Guild, Intents, Interaction, Message
 from discord.ext import commands
 from discord.utils import cached_property
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -41,7 +41,7 @@ class IncandescentBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=get_prefix, intents=Intents.all())
 
-        self.default_prefix = "in!"
+        self.default_prefix = "in?" if self.env == "development" else "in!"
         self.engine = create_async_engine(DB_URL)
 
     async def setup_hook(self) -> None:
@@ -58,19 +58,6 @@ class IncandescentBot(commands.Bot):
         cls: Type[commands.Context[Any]] = IncandescentContext,
     ) -> Any:
         return await super().get_context(origin, cls=cls)
-
-    async def on_ready(self) -> None:
-        user = cast(ClientUser, self.user)
-        log.info(f"Logged in as '{user}' ({user.id})")
-
-    async def on_message(self, message: Message) -> None:
-        author = message.author
-
-        if author.bot or isinstance(author, Webhook):
-            return
-
-        self.dispatch("regular_message", message)
-        await self.process_commands(message)
 
     @cached_property
     def guild(self) -> Guild:
