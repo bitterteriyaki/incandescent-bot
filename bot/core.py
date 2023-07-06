@@ -20,7 +20,7 @@ from os import environ
 from typing import Any, Type, Union, cast
 
 from discord import Guild, Intents, Interaction, Message
-from discord.ext import commands
+from discord.ext.commands import Bot, Context  # type: ignore
 from discord.utils import cached_property
 from jishaku.modules import find_extensions_in
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -35,7 +35,7 @@ environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
 log = logging.getLogger(__name__)
 
 
-class IncandescentBot(commands.Bot):
+class IncandescentBot(Bot):
     """Main bot class. The magic happens here."""
 
     def __init__(self) -> None:
@@ -53,7 +53,7 @@ class IncandescentBot(commands.Bot):
         origin: Union[Message, Interaction],
         /,
         *,
-        cls: Type[commands.Context[Any]] = IncandescentContext,
+        cls: Type[Context[Any]] = IncandescentContext,
     ) -> Any:
         return await super().get_context(origin, cls=cls)
 
