@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0 (2023-07-06)
+
+### Feat
+
+- **ext/events**: create initial events extension
+
 ## 0.7.0 (2023-07-04)
 
 ### Feat
