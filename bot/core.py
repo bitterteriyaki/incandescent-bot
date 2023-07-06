@@ -22,12 +22,12 @@ from typing import Any, Type, Union, cast
 from discord import Guild, Intents, Interaction, Message
 from discord.ext import commands
 from discord.utils import cached_property
+from jishaku.modules import find_extensions_in
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from bot.utils.constants import GUILD_ID
 from bot.utils.context import IncandescentContext
 from bot.utils.database import DB_URL
-from bot.utils.extensions import get_extensions
 
 environ["JISHAKU_NO_UNDERSCORE"] = "true"
 environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
@@ -45,10 +45,8 @@ class IncandescentBot(commands.Bot):
         self.engine = create_async_engine(DB_URL)
 
     async def setup_hook(self) -> None:
-        for extension in get_extensions():
+        for extension in find_extensions_in("bot/extensions"):
             await self.load_extension(extension)
-
-        await self.load_extension("jishaku")
 
     async def get_context(
         self,
