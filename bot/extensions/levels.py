@@ -201,16 +201,25 @@ class Levels(Cog):
         # user (so that the user only has one level role at a time) and
         # add the new level role to the user.
         if new_level != current_level:
-            if new_level in self.mapping:
-                await author.remove_roles(*self.mapping.values())
-                await author.add_roles(self.mapping[new_level])
-
-            content = (
+            contents = [
                 f"Parabéns, {author.mention}! Você subiu para o "
-                f"**nível {new_level}**!"
-            )
-            embed = create_embed(content, author=author)
+                f"**nível {new_level}**!",
+            ]
 
+            if new_level in self.mapping:
+                role = self.mapping[new_level]
+
+                # Add a message to the contents to notify the user which
+                # role they received when they leveled up.
+                contents.append(
+                    f"Você recebeu o cargo {role.mention} ao passar "
+                    f"para esse nível."
+                )
+
+                await author.remove_roles(*self.mapping.values())
+                await author.add_roles(role)
+
+            embed = create_embed("\n".join(contents), author=author)
             await message.reply(embed=embed, mention_author=False)
 
 
