@@ -20,13 +20,13 @@ from os import environ
 
 from click import group
 
-from bot.core import IncandescentBot
+from bot.core import IBot
 
 
 async def run_bot() -> None:
     token = environ["DISCORD_TOKEN"]
 
-    async with IncandescentBot() as bot:
+    async with IBot() as bot:
         await bot.start(token)
 
 

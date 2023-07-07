@@ -15,19 +15,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from typing import Optional
+
 from discord import Embed, Member
 
 from bot.utils.constants import EMBED_COLOR
 
 
-def create_embed(content: str, author: Member) -> Embed:
+def create_embed(content: Optional[str] = None, *, author: Member) -> Embed:
     """Creates an embed with the given content and author, using the
     default embed color.
 
     Parameters
     ----------
-    content: :class:`str`
-        The content of the embed.
+    content: Optional[:class:`str`]
+        The content of the embed. If this is not given, then the embed
+        will not have any content. Defaults to ``None``.
     author: :class:`discord.Member`
         The author of the embed. This is used to set the author name
         and icon.
