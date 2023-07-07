@@ -19,7 +19,7 @@ import logging
 from os import environ
 from typing import Any, Type, Union, cast
 
-from discord import Guild, Intents, Interaction, Message
+from discord import Game, Guild, Intents, Interaction, Message
 from discord.ext.commands import Bot, Context  # type: ignore
 from discord.utils import cached_property, setup_logging
 from jishaku.modules import find_extensions_in
@@ -39,7 +39,11 @@ class IBot(Bot):
     """Main bot class. The magic happens here."""
 
     def __init__(self) -> None:
-        super().__init__(command_prefix=get_prefix, intents=Intents.all())
+        super().__init__(
+            command_prefix=get_prefix,
+            intents=Intents.all(),
+            activity=Game(name="discord.gg/seios"),
+        )
 
         self.default_prefix = "in?" if self.env == "development" else "in!"
         self.engine = create_async_engine(DB_URL)
