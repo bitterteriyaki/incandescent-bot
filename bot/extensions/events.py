@@ -19,14 +19,14 @@ from discord import Message
 from discord.ext.commands import Cog  # type: ignore
 from sqlalchemy import insert
 
-from bot.core import IncandescentBot
+from bot.core import IBot
 from bot.utils.database import DiscordMessage
 
 
 class Events(Cog):
     """Handles many Discord events."""
 
-    def __init__(self, bot: IncandescentBot) -> None:
+    def __init__(self, bot: IBot) -> None:
         self.bot = bot
 
     @Cog.listener()
@@ -51,5 +51,5 @@ class Events(Cog):
         self.bot.dispatch("regular_message", message)
 
 
-async def setup(bot: IncandescentBot) -> None:
+async def setup(bot: IBot) -> None:
     await bot.add_cog(Events(bot))

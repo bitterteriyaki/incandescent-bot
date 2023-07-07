@@ -15,22 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from os import walk
-from os.path import splitext
-from typing import List
+from jishaku.features.invocation import InvocationFeature
+from jishaku.features.management import ManagementFeature
+from jishaku.features.root_command import RootCommand
+
+from bot.core import IBot
 
 
-def get_extensions(*, path: str = "bot/extensions") -> List[str]:
-    extensions: List[str] = []
+class Jishaku(RootCommand, ManagementFeature, InvocationFeature):
+    """Custom Jishaku cog. This is used to manage the bot."""
 
-    for root, _, files in walk(path):
-        for file in files:
-            filename, ext = splitext(file)
+    emote = "<:spfc:1116855346338742363>"
 
-            if ext != ".py":
-                continue
 
-            root = root.replace("/", ".")
-            extensions.append(f"{root}.{filename}")
-
-    return extensions
+async def setup(bot: IBot) -> None:
+    await bot.add_cog(Jishaku(bot=bot))

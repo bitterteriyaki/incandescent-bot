@@ -15,11 +15,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+############
+#  Guilds  #
+############
+
 GUILD_ID = 537720226515779587
+
+
+##############
+#  Channels  #
+##############
 
 TEST_CHANNEL_ID = 1122952411003240539
 
+
+############
+#  Colors  #
+############
+
 EMBED_COLOR = 0x2B2D31
+
+
+###########
+#  Roles  #
+###########
 
 LEVELS_MAPPING = {
     1: 537961145617743874,
@@ -30,3 +49,12 @@ LEVELS_MAPPING = {
     70: 559383244810878986,
     90: 559383251265912834,
 }
+
+
+############
+#  Emotes  #
+############
+
+PSEUDONYMS_EMOTE = "\U0001f38f"
+SUBCOMMANDS_EMOTE = "\U0001f3af"
+GATO_NERD_EMOTE = "<:Gato_nerd:1098057823910363337>"
