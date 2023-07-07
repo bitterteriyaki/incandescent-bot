@@ -18,10 +18,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from typing import Any, List, Mapping, Optional, cast
 
 from discord import Member
-from discord.ext.commands import Cog, Command, HelpCommand  # type: ignore
+from discord.ext.commands import (  # type: ignore
+    Cog,
+    Command,
+    Group,
+    HelpCommand,
+)
 
 from bot.core import IBot
-from bot.utils.constants import GATO_NERD_EMOTE
+from bot.utils.constants import (
+    GATO_NERD_EMOTE,
+    PSEUDONYMS_EMOTE,
+    SUBCOMMANDS_EMOTE,
+)
 from bot.utils.embed import create_embed
 
 
@@ -57,6 +66,31 @@ class IHelpCommand(HelpCommand):
 
         await ctx.reply(embed=embed)
 
+    async def send_group_help(self, group: Group[Any, ..., Any]) -> None:
+        ctx = self.context
+        author = cast(Member, ctx.author)
+
+        embed = create_embed(group.help, author=author)
+        prefix = ctx.clean_prefix
+
+        usage = f"{prefix}{group.qualified_name} {group.usage}"
+        embed.title = f"{GATO_NERD_EMOTE} `{usage}`"
+
+        if group.aliases:
+            aliases = ", ".join(f"`{alias}`" for alias in group.aliases)
+        else:
+            aliases = "Este comando não possui pseudônimos."
+
+        name = f"{PSEUDONYMS_EMOTE} Pseudônimos"
+        embed.add_field(name=name, value=aliases, inline=False)
+
+        subcommands = [f"`{command.name}`" for command in group.commands]
+        name = f"{SUBCOMMANDS_EMOTE} Subcomandos"
+
+        embed.add_field(name=name, value=", ".join(subcommands), inline=False)
+
+        await ctx.reply(embed=embed)
+
     async def send_command_help(self, command: Command[Any, ..., Any]) -> None:
         ctx = self.context
         author = cast(Member, ctx.author)
@@ -72,7 +106,7 @@ class IHelpCommand(HelpCommand):
         else:
             aliases = "Este comando não possui pseudônimos."
 
-        name = "\U0001f38f Pseudônimos"
+        name = f"{PSEUDONYMS_EMOTE} Pseudônimos"
         embed.add_field(name=name, value=aliases, inline=False)
 
         await ctx.reply(embed=embed)
