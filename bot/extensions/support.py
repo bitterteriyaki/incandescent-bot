@@ -62,18 +62,11 @@ class IHelpCommand(HelpCommand):
         author = cast(Member, ctx.author)
 
         embed = create_embed(command.help, author=author)
-
-        #
-        # Usage
-        #
         prefix = ctx.clean_prefix
 
         usage = f"{prefix}{command.qualified_name} {command.usage}"
         embed.title = f"{GATO_NERD_EMOTE} `{usage}`"
 
-        #
-        # Aliases
-        #
         if command.aliases:
             aliases = ", ".join(f"`{alias}`" for alias in command.aliases)
         else:
