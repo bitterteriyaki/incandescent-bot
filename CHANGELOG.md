@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0 (2023-07-07)
+
+### Feat
+
+- **core**: Add a Discord presence for the bot
+- **ext/support**: Add support to group commands
+- **ext/support**: add initial support cog
+- **ext/jishaku**: initial custom Jishaku cog
+
 ## 0.8.0 (2023-07-06)
 
 ### Feat
