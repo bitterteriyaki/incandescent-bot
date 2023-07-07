@@ -21,6 +21,7 @@ from discord import Member
 from discord.ext.commands import Cog, Command, HelpCommand  # type: ignore
 
 from bot.core import IBot
+from bot.utils.constants import GATO_NERD_EMOTE
 from bot.utils.embed import create_embed
 
 
@@ -38,9 +39,10 @@ class IHelpCommand(HelpCommand):
         ctx = self.context
         author = cast(Member, ctx.author)
 
-        cmd = f"{ctx.clean_prefix}{ctx.invoked_with}"
-        content = f"Use `{cmd} [comando]` para mais informações de um comando."
+        usage = self.command_attrs["usage"]
+        cmd = f"{ctx.clean_prefix}{ctx.invoked_with} {usage}"
 
+        content = f"Use `{cmd}` para mais informações de um comando."
         embed = create_embed(content, author=author)
 
         for cog, commands in mapping.items():
@@ -65,10 +67,9 @@ class IHelpCommand(HelpCommand):
         # Usage
         #
         prefix = ctx.clean_prefix
-        emote = "<:Gato_nerd:1098057823910363337>"
 
-        usage = f"{prefix}{command.qualified_name}"
-        embed.title = f"{emote} `{usage} {command.usage}`"
+        usage = f"{prefix}{command.qualified_name} {command.usage}"
+        embed.title = f"{GATO_NERD_EMOTE} `{usage}`"
 
         #
         # Aliases
