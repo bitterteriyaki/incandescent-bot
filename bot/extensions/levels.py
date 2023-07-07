@@ -27,7 +27,7 @@ from discord.ext.commands import (  # type: ignore
 )
 from sqlalchemy import insert, select, update
 
-from bot.core import IncandescentBot
+from bot.core import IBot
 from bot.utils.constants import LEVELS_MAPPING, TEST_CHANNEL_ID
 from bot.utils.database import LevelUser
 from bot.utils.embed import create_embed
@@ -36,7 +36,7 @@ from bot.utils.embed import create_embed
 class Levels(Cog):
     """Ranking system for the bot."""
 
-    def __init__(self, bot: IncandescentBot) -> None:
+    def __init__(self, bot: IBot) -> None:
         self.bot = bot
         self.cooldown = CooldownMapping.from_cooldown(1, 60, BucketType.user)
 
@@ -119,10 +119,10 @@ class Levels(Cog):
                 f"Parabéns, {author.mention}! Você subiu para o "
                 f"**nível {new_level}**!"
             )
-            embed = create_embed(content, author)
+            embed = create_embed(content, author=author)
 
             await message.reply(embed=embed, mention_author=False)
 
 
-async def setup(bot: IncandescentBot) -> None:
+async def setup(bot: IBot) -> None:
     await bot.add_cog(Levels(bot))

@@ -23,12 +23,12 @@ from discord.ext import commands
 from bot.utils.embed import create_embed
 
 if TYPE_CHECKING:
-    from bot.core import IncandescentBot
+    from bot.core import IBot
 else:
-    IncandescentBot = Any
+    IBot = Any
 
 
-class IncandescentContext(commands.Context[IncandescentBot]):
+class IContext(commands.Context[IBot]):
     """A subclass of :class:`discord.ext.commands.Context` that
     overrides some methods and adds some new ones. This is used as the
     context for all commands in the bot.
@@ -52,10 +52,9 @@ class IncandescentContext(commands.Context[IncandescentBot]):
             to :meth:`discord.abc.Messageable.send`.
         """
         author = cast(Member, self.author)
-        mention_author = kwargs.pop("mention_author", False)
 
-        content = content or ""
-        embed = create_embed(content, author)
+        mention_author = kwargs.pop("mention_author", False)
+        embed = kwargs.pop("embed", create_embed(content, author=author))
 
         return await super().reply(
             embed=embed, mention_author=mention_author, **kwargs

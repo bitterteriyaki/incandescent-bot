@@ -15,15 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from jishaku.features.invocation import InvocationFeature
 from jishaku.features.management import ManagementFeature
 from jishaku.features.root_command import RootCommand
 
-from bot.core import IncandescentBot
+from bot.core import IBot
 
 
-class CustomJishaku(RootCommand, ManagementFeature):
+class Jishaku(RootCommand, ManagementFeature, InvocationFeature):
     """Custom Jishaku cog. This is used to manage the bot."""
 
+    emote = "<:spfc:1116855346338742363>"
 
-async def setup(bot: IncandescentBot) -> None:
-    await bot.add_cog(CustomJishaku(bot=bot))
+
+async def setup(bot: IBot) -> None:
+    await bot.add_cog(Jishaku(bot=bot))

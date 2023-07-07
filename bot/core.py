@@ -21,12 +21,12 @@ from typing import Any, Type, Union, cast
 
 from discord import Guild, Intents, Interaction, Message
 from discord.ext.commands import Bot, Context  # type: ignore
-from discord.utils import cached_property
+from discord.utils import cached_property, setup_logging
 from jishaku.modules import find_extensions_in
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from bot.utils.constants import GUILD_ID
-from bot.utils.context import IncandescentContext
+from bot.utils.context import IContext
 from bot.utils.database import DB_URL
 
 environ["JISHAKU_NO_UNDERSCORE"] = "true"
@@ -35,7 +35,7 @@ environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
 log = logging.getLogger(__name__)
 
 
-class IncandescentBot(Bot):
+class IBot(Bot):
     """Main bot class. The magic happens here."""
 
     def __init__(self) -> None:
@@ -43,6 +43,8 @@ class IncandescentBot(Bot):
 
         self.default_prefix = "in?" if self.env == "development" else "in!"
         self.engine = create_async_engine(DB_URL)
+
+        setup_logging()
 
     async def setup_hook(self) -> None:
         for extension in find_extensions_in("bot/extensions"):
@@ -53,7 +55,7 @@ class IncandescentBot(Bot):
         origin: Union[Message, Interaction],
         /,
         *,
-        cls: Type[Context[Any]] = IncandescentContext,
+        cls: Type[Context[Any]] = IContext,
     ) -> Any:
         return await super().get_context(origin, cls=cls)
 
@@ -66,12 +68,12 @@ class IncandescentBot(Bot):
         return environ["BOT_ENV"]
 
 
-async def get_prefix(bot: IncandescentBot, message: Message) -> str:
+async def get_prefix(bot: IBot, message: Message) -> str:
     """Get the prefix for the bot.
 
     Parameters
     ----------
-    bot: :class:`IncandescentBot`
+    bot: :class:`IBot`
         The bot instance.
     message: :class:`discord.Message`
         The message that invoked the command.
