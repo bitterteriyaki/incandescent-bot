@@ -15,14 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Optional
+from typing import Optional, Union
 
-from discord import Embed, Member
+from discord import Embed, Member, User
 
 from bot.utils.constants import EMBED_COLOR
 
 
-def create_embed(content: Optional[str] = None, *, author: Member) -> Embed:
+def create_embed(
+    content: Optional[str] = None,
+    *,
+    author: Union[User, Member],
+) -> Embed:
     """Creates an embed with the given content and author, using the
     default embed color.
 
