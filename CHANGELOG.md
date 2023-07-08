@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0 (2023-07-07)
+
+### Feat
+
+- **ext/levels**: Release the initial commands to manipulate experience
+
 ## 0.9.0 (2023-07-07)
 
 ### Feat
