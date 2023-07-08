@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import TYPE_CHECKING, Any, Optional, cast
+from typing import TYPE_CHECKING, Any, Optional
 
-from discord import Member, Message
+from discord import Message
 from discord.ext import commands
 
 from bot.utils.embed import create_embed
@@ -35,7 +35,9 @@ class IContext(commands.Context[IBot]):
     """
 
     async def reply(
-        self, content: Optional[str] = None, **kwargs: Any
+        self,
+        content: Optional[str] = None,
+        **kwargs: Any,
     ) -> Message:
         """Overrides :meth:`discord.ext.commands.Context.reply` to
         automatically create an embed with the given content and author
@@ -51,10 +53,8 @@ class IContext(commands.Context[IBot]):
             :meth:`discord.ext.commands.Context.reply`. This is passed
             to :meth:`discord.abc.Messageable.send`.
         """
-        author = cast(Member, self.author)
-
         mention_author = kwargs.pop("mention_author", False)
-        embed = kwargs.pop("embed", create_embed(content, author=author))
+        embed = kwargs.pop("embed", create_embed(content, author=self.author))
 
         return await super().reply(
             embed=embed, mention_author=mention_author, **kwargs

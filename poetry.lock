@@ -681,6 +681,20 @@ docs = ["Sphinx", "docutils (<0.18)"]
 test = ["objgraph", "psutil"]
 
 [[package]]
+name = "humanize"
+version = "4.7.0"
+description = "Python humanize utilities"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "humanize-4.7.0-py3-none-any.whl", hash = "sha256:df7c429c2d27372b249d3f26eb53b07b166b661326e0325793e0a988082e3889"},
+    {file = "humanize-4.7.0.tar.gz", hash = "sha256:7ca0e43e870981fa684acb5b062deb307218193bca1a01f2b2676479df849b3a"},
+]
+
+[package.extras]
+tests = ["freezegun", "pytest", "pytest-cov"]
+
+[[package]]
 name = "identify"
 version = "2.5.24"
 description = "File identification library for Python"
@@ -1551,4 +1565,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "f00f8006699c6475105d9e6f353816341cb037b0bd5fab80ae7ed731b03c9940"
+content-hash = "ac15696e924473aa83e14d1e0a1913f4bb2bf556517dd69b16de3cc31d31a2a5"
