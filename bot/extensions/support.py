@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Any, List, Mapping, Optional, cast
+from typing import Any, List, Mapping, Optional
 
-from discord import Member
 from discord.ext.commands import (  # type: ignore
     Cog,
     Command,
@@ -46,13 +45,12 @@ class IHelpCommand(HelpCommand):
         self, mapping: Mapping[Optional[Cog], List[Command[Any, ..., Any]]]
     ) -> None:
         ctx = self.context
-        author = cast(Member, ctx.author)
 
         usage = self.command_attrs["usage"]
         cmd = f"{ctx.clean_prefix}{ctx.invoked_with} {usage}"
 
         content = f"Use `{cmd}` para mais informações de um comando."
-        embed = create_embed(content, author=author)
+        embed = create_embed(content, author=ctx.author)
 
         for cog, commands in mapping.items():
             filtered_commands = await self.filter_commands(commands, sort=True)
@@ -68,9 +66,8 @@ class IHelpCommand(HelpCommand):
 
     async def send_group_help(self, group: Group[Any, ..., Any]) -> None:
         ctx = self.context
-        author = cast(Member, ctx.author)
 
-        embed = create_embed(group.help, author=author)
+        embed = create_embed(group.help, author=ctx.author)
         prefix = ctx.clean_prefix
 
         usage = f"{prefix}{group.qualified_name} {group.usage}"
@@ -93,9 +90,8 @@ class IHelpCommand(HelpCommand):
 
     async def send_command_help(self, command: Command[Any, ..., Any]) -> None:
         ctx = self.context
-        author = cast(Member, ctx.author)
 
-        embed = create_embed(command.help, author=author)
+        embed = create_embed(command.help, author=ctx.author)
         prefix = ctx.clean_prefix
 
         usage = f"{prefix}{command.qualified_name} {command.usage}"

@@ -16,27 +16,35 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from random import randint
-from typing import Dict, cast
+from typing import Dict, Optional, cast
 
 from discord import Member, Message, Role, TextChannel
 from discord.ext import commands
 from discord.ext.commands import (  # type: ignore
+    Author,
     BucketType,
     Cog,
     CooldownMapping,
+    Greedy,
+    hybrid_group,
 )
+from humanize import intcomma
 from sqlalchemy import insert, select, update
 
 from bot.core import IBot
 from bot.utils.constants import LEVELS_MAPPING, TEST_CHANNEL_ID
+from bot.utils.context import IContext
 from bot.utils.database import LevelUser
 from bot.utils.embed import create_embed
+from bot.utils.formats import human_join
 
 
 class Levels(Cog):
     """Ranking system for the bot."""
 
     __slots__ = ("bot", "cooldown", "mapping")
+
+    emote = "<:Gang_mitinho:1115116658072223754>"
 
     def __init__(self, bot: IBot) -> None:
         self.bot = bot
@@ -163,6 +171,72 @@ class Levels(Cog):
 
         return result.exp if result is not None else 0
 
+    async def bulk_add_experience(self, *user_ids: int, to_add: int) -> None:
+        """Adds experience to multiple users. This is more efficient
+        than calling :meth:`add_experience` multiple times as it only
+        makes one query.
+
+        Parameters
+        ----------
+        *user_ids: :class:`int`
+            The IDs of the users to add experience to.
+        to_add: :class:`int`
+            The amount of experience to add.
+        """
+        async with self.bot.engine.begin() as conn:
+            stmt = (
+                update(LevelUser)
+                .where(LevelUser.user_id.in_(user_ids))
+                .values(exp=LevelUser.exp + to_add)
+            )
+            await conn.execute(stmt)
+
+    async def bulk_set_experience(self, *user_ids: int, to_set: int) -> None:
+        """Sets the experience of multiple users.
+
+        Parameters
+        ----------
+        *user_ids: :class:`int`
+            The IDs of the users to set the experience of.
+        exp: :class:`int`
+            The amount of experience to set.
+        """
+        async with self.bot.engine.begin() as conn:
+            stmt = (
+                update(LevelUser)
+                .where(LevelUser.user_id.in_(user_ids))
+                .values(exp=to_set)
+            )
+            await conn.execute(stmt)
+
+    def draw_experience_bar(self, exp: int, *, width: int = 20) -> str:
+        """Draws an experience bar for the given experience.
+
+        Parameters
+        ----------
+        exp: :class:`int`
+            The experience to draw the bar for.
+        width: :class:`int`
+            The width of the bar. Defaults to ``20``.
+
+        Returns
+        -------
+        :class:`str`
+            The experience bar for the given experience.
+        """
+        level = self.get_level_from_exp(exp)
+        needed_exp = self.get_level_exp(level)
+
+        exp -= sum(self.get_level_exp(i) for i in range(level))
+        amount = round((exp / needed_exp) * 100)
+
+        filled = "█" * round(width * (amount / 100))
+        empty = "·" * (width - len(filled))
+
+        return f"`[{filled}{empty}]`"
+
+    # Listeners
+
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         get_role = self.bot.guild.get_role
@@ -203,7 +277,7 @@ class Levels(Cog):
         if new_level != current_level:
             contents = [
                 f"Parabéns, {author.mention}! Você subiu para o "
-                f"**nível {new_level}**!",
+                f"**nível {intcomma(new_level)}**!",
             ]
 
             if new_level in self.mapping:
@@ -221,6 +295,108 @@ class Levels(Cog):
 
             embed = create_embed("\n".join(contents), author=author)
             await message.reply(embed=embed, mention_author=False)
+
+    # Commands
+
+    @hybrid_group(fallback="info", usage="[membro]")
+    async def exp(self, ctx: IContext, member: Member = Author) -> None:
+        """Informações sobre a experiência do usuário."""
+        exp = await self.get_experience(member.id)
+        level = self.get_level_from_exp(exp)
+
+        contents = [
+            f"**Nível:** {intcomma(level)}",
+            f"**Experiência:** {intcomma(exp)}",
+            self.draw_experience_bar(exp),
+        ]
+
+        embed = create_embed("\n".join(contents), author=ctx.author)
+
+        embed.title = f"Experiência de {member}"
+        embed.set_thumbnail(url=member.display_avatar.url)
+
+        await ctx.reply(embed=embed)
+
+    @exp.command(name="add", usage="<usuários...> <quantidade>")
+    @commands.is_owner()
+    async def exp_add(
+        self,
+        ctx: IContext,
+        members: Greedy[Member],
+        amount: int,
+    ) -> Optional[Message]:
+        """Adiciona experiência a um ou mais usuários."""
+        if not members:
+            return await ctx.reply(
+                "Você precisa mencionar pelo menos um usuário."
+            )
+
+        if amount <= 0:
+            return await ctx.reply(
+                "A quantidade de experiência deve ser maior que zero."
+            )
+
+        users_ids = [member.id for member in members]
+        await self.bulk_add_experience(*users_ids, to_add=amount)
+
+        mentions = human_join([member.mention for member in members])
+        exp = intcomma(amount)
+
+        await ctx.reply(f"Adicionado `{exp}` de experiência para {mentions}.")
+
+    @exp.command(name="remove", usage="<usuários...> <quantidade>")
+    @commands.is_owner()
+    async def exp_remove(
+        self,
+        ctx: IContext,
+        members: Greedy[Member],
+        amount: int,
+    ) -> Optional[Message]:
+        """Remove experiência de um ou mais usuários."""
+        if not members:
+            return await ctx.reply(
+                "Você precisa mencionar pelo menos um usuário."
+            )
+
+        if amount <= 0:
+            return await ctx.reply(
+                "A quantidade de experiência deve ser maior que zero."
+            )
+
+        users_ids = [member.id for member in members]
+        await self.bulk_add_experience(*users_ids, to_add=-amount)
+
+        mentions = human_join([member.mention for member in members])
+        exp = intcomma(amount)
+
+        await ctx.reply(f"Removido `{exp}` de experiência de {mentions}.")
+
+    @exp.command(name="set", usage="<usuários...> <quantidade>")
+    @commands.is_owner()
+    async def exp_set(
+        self,
+        ctx: IContext,
+        members: Greedy[Member],
+        amount: int,
+    ) -> Optional[Message]:
+        """Define a experiência de um ou mais usuários."""
+        if not members:
+            return await ctx.reply(
+                "Você precisa mencionar pelo menos um usuário."
+            )
+
+        if amount <= 0:
+            return await ctx.reply(
+                "A quantidade de experiência deve ser maior que zero."
+            )
+
+        users_ids = [member.id for member in members]
+        await self.bulk_set_experience(*users_ids, to_set=amount)
+
+        mentions = human_join([member.mention for member in members])
+        exp = intcomma(amount)
+
+        await ctx.reply(f"Definido `{exp}` de experiência para {mentions}.")
 
 
 async def setup(bot: IBot) -> None:

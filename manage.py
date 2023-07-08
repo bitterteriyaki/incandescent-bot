@@ -18,12 +18,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import asyncio
 from os import environ
 
+import humanize
 from click import group
 
 from bot.core import IBot
 
 
 async def run_bot() -> None:
+    humanize.activate("pt_BR")
     token = environ["DISCORD_TOKEN"]
 
     async with IBot() as bot:
