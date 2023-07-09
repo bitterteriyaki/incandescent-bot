@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0 (2023-07-08)
+
+### Feat
+
+- **ext/fun**: Create initial fun cog
+
 ## 0.10.0 (2023-07-07)
 
 ### Feat
