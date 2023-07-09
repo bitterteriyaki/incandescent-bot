@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.2 (2023-07-08)
+
+### Fix
+
+- **ext/levels**: Insert the users when add experience to multiple users
+
 ## 0.11.1 (2023-07-08)
 
 ### Fix
