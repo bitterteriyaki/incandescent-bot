@@ -43,8 +43,6 @@ from bot.utils.formats import human_join
 class Levels(Cog):
     """Ranking system for the bot."""
 
-    __slots__ = ("bot", "cooldown", "mapping")
-
     emote = "<:Gang_mitinho:1115116658072223754>"
 
     def __init__(self, bot: IBot) -> None:
