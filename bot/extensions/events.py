@@ -15,12 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from discord import Message
+from io import BytesIO
+from typing import cast
+
+from discord import File, Member, Message, TextChannel
 from discord.ext.commands import Cog  # type: ignore
+from discord.utils import cached_property
+from PIL import Image, ImageDraw
 from sqlalchemy import insert
 
 from bot.core import IBot
+from bot.utils.constants import GENERAL_CHANNEL_ID, WELCOME_EMOTE
 from bot.utils.database import DiscordMessage
+from bot.utils.embed import create_embed
 
 
 class Events(Cog):
@@ -28,6 +35,22 @@ class Events(Cog):
 
     def __init__(self, bot: IBot) -> None:
         self.bot = bot
+
+        with open("bot/assets/welcome.png", "rb") as f:
+            self.welcome_bytes = BytesIO(f.read())
+
+        self.size = (500, 500)
+        self.coords = (208, 257)
+
+        self.mask = Image.new("L", self.size, 0)
+        self.background = Image.new("RGBA", self.size, 0)
+
+        draw = ImageDraw.Draw(self.mask)
+        draw.ellipse((4, 4, self.size[0] - 4, self.size[1] - 4), fill=255)
+
+    @cached_property
+    def general_channel(self) -> TextChannel:
+        return cast(TextChannel, self.bot.get_channel(GENERAL_CHANNEL_ID))
 
     @Cog.listener()
     async def on_ready(self) -> None:
@@ -49,6 +72,34 @@ class Events(Cog):
             await conn.execute(stmt)
 
         self.bot.dispatch("regular_message", message)
+
+    @Cog.listener()
+    async def on_member_join(self, member: Member) -> None:
+        welcome = Image.open(self.welcome_bytes)
+        output = BytesIO()
+
+        async with self.bot.session.get(member.display_avatar.url) as res:
+            image_bytes = BytesIO(await res.read())
+
+        avatar = Image.open(image_bytes).resize(self.size)
+
+        rounded = Image.composite(avatar, self.background, self.mask)
+        welcome.paste(rounded, box=self.coords, mask=self.mask)
+
+        welcome.save(output, format="PNG")
+        output.seek(0)
+
+        content = (
+            f"Olá, {member.mention}! Seja bem-vindo(a) ao **Incandescent "
+            f"Society**! Esperamos que você se divirta bastante aqui."
+        )
+
+        embed = create_embed(content)
+        embed.title = f"Seja bem-vindo(a)! {WELCOME_EMOTE}"
+        embed.set_image(url="attachment://welcome.png")
+
+        file = File(output, filename="welcome.png")
+        await self.general_channel.send(member.mention, file=file, embed=embed)
 
 
 async def setup(bot: IBot) -> None:
