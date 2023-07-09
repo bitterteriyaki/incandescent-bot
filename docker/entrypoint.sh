@@ -15,4 +15,5 @@ dockerize \
 
 >&2 echo 'PostgreSQL is up - continuing...'
 
+alembic upgrade head
 exec $cmd

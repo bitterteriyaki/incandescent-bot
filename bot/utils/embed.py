@@ -25,7 +25,7 @@ from bot.utils.constants import EMBED_COLOR
 def create_embed(
     content: Optional[str] = None,
     *,
-    author: Union[User, Member],
+    author: Optional[Union[User, Member]] = None,
 ) -> Embed:
     """Creates an embed with the given content and author, using the
     default embed color.
@@ -44,9 +44,10 @@ def create_embed(
     :class:`discord.Embed`
         The embed with the given content and author.
     """
-    avatar_url = author.display_avatar.url
-
     embed = Embed(description=content, color=EMBED_COLOR)
-    embed.set_author(name=author.display_name, icon_url=avatar_url)
+
+    if author is not None:
+        avatar_url = author.display_avatar.url
+        embed.set_author(name=author.display_name, icon_url=avatar_url)
 
     return embed
