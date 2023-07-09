@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.1 (2023-07-08)
+
+### Fix
+
+- **core**: Change bot activity and status
+
 ## 0.11.0 (2023-07-08)
 
 ### Feat
