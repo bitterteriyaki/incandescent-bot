@@ -19,7 +19,7 @@ import logging
 from os import environ
 from typing import Any, Type, Union, cast
 
-from discord import Game, Guild, Intents, Interaction, Message
+from discord import Game, Guild, Intents, Interaction, Message, Status
 from discord.ext.commands import Bot, Context  # type: ignore
 from discord.utils import cached_property, setup_logging
 from jishaku.modules import find_extensions_in
@@ -42,7 +42,8 @@ class IBot(Bot):
         super().__init__(
             command_prefix=get_prefix,
             intents=Intents.all(),
-            activity=Game(name="discord.gg/seios"),
+            activity=Game(name="discord.gg/incandescent"),
+            status=Status.dnd,
         )
 
         self.default_prefix = "in?" if self.env == "development" else "in!"
