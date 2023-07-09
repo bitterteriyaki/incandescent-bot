@@ -29,7 +29,8 @@ from discord.ext.commands import (  # type: ignore
     hybrid_group,
 )
 from humanize import intcomma
-from sqlalchemy import insert, select, update
+from sqlalchemy import select, update
+from sqlalchemy.dialects.postgresql import insert  # type: ignore
 
 from bot.core import IBot
 from bot.utils.constants import LEVELS_MAPPING, TEST_CHANNEL_ID
@@ -184,12 +185,16 @@ class Levels(Cog):
             The amount of experience to add.
         """
         async with self.bot.engine.begin() as conn:
-            stmt = (
-                update(LevelUser)
-                .where(LevelUser.user_id.in_(user_ids))
-                .values(exp=LevelUser.exp + to_add)
-            )
-            await conn.execute(stmt)
+            for user_id in user_ids:
+                stmt = (
+                    insert(LevelUser)  # type: ignore
+                    .values(user_id=user_id, exp=to_add)
+                    .on_conflict_do_update(
+                        index_elements=[LevelUser.user_id],
+                        set_=dict(exp=LevelUser.exp + to_add),
+                    )
+                )
+                await conn.execute(stmt)
 
     async def bulk_set_experience(self, *user_ids: int, to_set: int) -> None:
         """Sets the experience of multiple users.
