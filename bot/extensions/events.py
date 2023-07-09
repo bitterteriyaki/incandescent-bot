@@ -50,7 +50,9 @@ class Events(Cog):
 
     @cached_property
     def general_channel(self) -> TextChannel:
-        return cast(TextChannel, self.bot.get_channel(GENERAL_CHANNEL_ID))
+        return cast(
+            TextChannel, self.bot.guild.get_channel(GENERAL_CHANNEL_ID)
+        )
 
     @Cog.listener()
     async def on_ready(self) -> None:
