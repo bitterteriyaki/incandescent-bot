@@ -19,6 +19,7 @@ import logging
 from os import environ
 from typing import Any, Type, Union, cast
 
+from aiohttp import ClientSession
 from discord import Game, Guild, Intents, Interaction, Message, Status
 from discord.ext.commands import Bot, Context  # type: ignore
 from discord.utils import cached_property, setup_logging
@@ -48,6 +49,7 @@ class IBot(Bot):
 
         self.default_prefix = "in?" if self.env == "development" else "in!"
         self.engine = create_async_engine(DB_URL)
+        self.session = ClientSession()
 
         setup_logging()
 

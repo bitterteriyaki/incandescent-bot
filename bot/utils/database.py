@@ -15,9 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from functools import partial
 from os import environ
 
-from sqlalchemy import BigInteger, Column, DateTime, String
+from sqlalchemy import BigInteger
+from sqlalchemy import Column as BaseColumn
+from sqlalchemy import DateTime, String
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase
 
@@ -30,6 +33,9 @@ DB_NAME = environ["POSTGRES_DB"]
 DB_URL = (
     f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
+
+
+Column = partial(BaseColumn, nullable=False)
 
 
 class Base(AsyncAttrs, DeclarativeBase):
