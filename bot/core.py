@@ -69,7 +69,11 @@ class IBot(Bot):
 
     @cached_property
     def env(self) -> str:
-        return environ["BOT_ENV"]
+        return (
+            "development"
+            if environ["BOT_ENV"] == "development"
+            else "production"
+        )
 
 
 async def get_prefix(bot: IBot, message: Message) -> str:
