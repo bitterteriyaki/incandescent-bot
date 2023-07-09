@@ -207,12 +207,16 @@ class Levels(Cog):
             The amount of experience to set.
         """
         async with self.bot.engine.begin() as conn:
-            stmt = (
-                update(LevelUser)
-                .where(LevelUser.user_id.in_(user_ids))
-                .values(exp=to_set)
-            )
-            await conn.execute(stmt)
+            for user_id in user_ids:
+                stmt = (
+                    insert(LevelUser)  # type: ignore
+                    .values(user_id=user_id, exp=to_set)
+                    .on_conflict_do_update(
+                        index_elements=[LevelUser.user_id],
+                        set_=dict(exp=to_set),
+                    )
+                )
+                await conn.execute(stmt)
 
     def draw_experience_bar(self, exp: int, *, width: int = 20) -> str:
         """Draws an experience bar for the given experience.
