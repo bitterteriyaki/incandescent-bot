@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.12.0 (2023-07-09)
+
+### Feat
+
+- **ext/events**: Handle `on_member_join` event and send welcome message
+
+### Fix
+
+- **utils/database**: Set the tables columns not nullable by default
+- **ext/levels**: Insert the users when set experience to multiple users
+
 ## 0.11.2 (2023-07-08)
 
 ### Fix
