@@ -36,7 +36,7 @@ class Fun(Cog):
     def __init__(self, bot: IBot) -> None:
         self.bot = bot
         self.task = crontab(  # type: ignore
-            "0 15 * * 1",
+            "*/10 * * * *",
             func=self.chatty_event,
             start=False,
         )
