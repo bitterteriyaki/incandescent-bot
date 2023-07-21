@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "incandescent-bot"
-version = "0.12.0"
+version = "0.13.0"
 description = "A Discord bot for Incandescent Society Discord server written in Python."
 authors = ["kyomi <me@kyomi.dev>"]
 license = "GPL-3.0"
@@ -36,7 +36,7 @@ profile = "black"
 line_length = 79
 
 [tool.commitizen]
-version = "0.12.0"
+version = "0.13.0"
 version_files = ["pyproject.toml"]
 update_changelog_on_bump = true
 changelog_incremental = true

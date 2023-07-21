@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0 (2023-07-21)
+
+### Feat
+
+- **ext/jishaku**: Add all the features from Jishaku
+
+### Fix
+
+- **ext/events**: Get the general channel from this default guild instead look over all guilds
+
 ## 0.12.0 (2023-07-09)
 
 ### Feat
