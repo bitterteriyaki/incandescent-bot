@@ -61,3 +61,12 @@ class DiscordMessage(Base):
     channel_id = Column(BigInteger)
     content = Column(String)
     created_at = Column(DateTime)
+
+
+class EconomyUser(Base):
+    """Represents a user's economy."""
+
+    __tablename__ = "economy"
+
+    user_id = Column(BigInteger, primary_key=True)
+    balance = Column(BigInteger, default=0)
