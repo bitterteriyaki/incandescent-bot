@@ -29,7 +29,7 @@ from discord.ext.commands import (  # type: ignore
     hybrid_group,
 )
 from humanize import intcomma
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert  # type: ignore
 
 from bot.core import IBot
@@ -40,7 +40,7 @@ from bot.utils.embed import create_embed
 from bot.utils.formats import human_join
 
 
-class Levels(Cog):
+class Levels(Cog, name="Ranking"):
     """Ranking system for the bot."""
 
     emote = "<:Gang_mitinho:1115116658072223754>"
@@ -144,7 +144,8 @@ class Levels(Cog):
 
     async def add_experience(self, user_id: int, to_add: int) -> int:
         """Adds experience to a user and returns the new experience. If
-        the user doesn't exist in the database, then zero is returned.
+        the user doesn't exist in the database, then they will be
+        inserted with the given amount of experience.
 
         Parameters
         ----------
@@ -156,19 +157,21 @@ class Levels(Cog):
         Returns
         -------
         :class:`int`
-            The new experience of the user, or zero if the user doesn't
-            exist in the database.
+            The new experience of the user.
         """
         async with self.bot.engine.begin() as conn:
             stmt = (
-                update(LevelUser)
-                .where(LevelUser.user_id == user_id)
-                .values(exp=LevelUser.exp + to_add)
+                insert(LevelUser)  # type: ignore
+                .values(user_id=user_id, exp=to_add)
+                .on_conflict_do_update(
+                    index_elements=[LevelUser.user_id],
+                    set_=dict(exp=LevelUser.exp + to_add),
+                )
                 .returning(LevelUser.exp)
             )
             result = (await conn.execute(stmt)).fetchone()
 
-        return result.exp if result is not None else 0
+        return result.exp if result is not None else to_add
 
     async def bulk_add_experience(self, *user_ids: int, to_add: int) -> None:
         """Adds experience to multiple users. This is more efficient

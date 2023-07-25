@@ -20,13 +20,13 @@ from os import environ
 from typing import Any, Type, Union, cast
 
 from aiohttp import ClientSession
-from discord import Game, Guild, Intents, Interaction, Message, Status
+from discord import Game, Guild, Intents, Interaction, Message, Role, Status
 from discord.ext.commands import Bot, Context  # type: ignore
 from discord.utils import cached_property, setup_logging
 from jishaku.modules import find_extensions_in
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from bot.utils.constants import GUILD_ID
+from bot.utils.constants import BOOSTER_ROLE_ID, GUILD_ID
 from bot.utils.context import IContext
 from bot.utils.database import DB_URL
 
@@ -69,6 +69,10 @@ class IBot(Bot):
     @cached_property
     def guild(self) -> Guild:
         return cast(Guild, self.get_guild(GUILD_ID))
+
+    @cached_property
+    def booster_role(self) -> Role:
+        return cast(Role, self.guild.get_role(BOOSTER_ROLE_ID))
 
     @cached_property
     def env(self) -> str:

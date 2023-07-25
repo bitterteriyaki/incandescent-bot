@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, cast
 
-from discord import Message
-from discord.ext import commands
+from discord import Member, Message
+from discord.ext.commands import Context  # type: ignore
 
 from bot.utils.embed import create_embed
 
@@ -28,11 +28,21 @@ else:
     IBot = Any
 
 
-class IContext(commands.Context[IBot]):
+class IContext(Context[IBot]):
     """A subclass of :class:`discord.ext.commands.Context` that
     overrides some methods and adds some new ones. This is used as the
     context for all commands in the bot.
     """
+
+    def is_booster(self) -> bool:
+        """Returns whether the author of the command is a booster.
+
+        Returns
+        -------
+        :class:`bool`
+            Whether the author of the command is a booster.
+        """
+        return self.bot.booster_role in cast(Member, self.author).roles
 
     async def reply(
         self,

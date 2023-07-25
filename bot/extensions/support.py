@@ -70,7 +70,11 @@ class IHelpCommand(HelpCommand):
         embed = create_embed(group.help, author=ctx.author)
         prefix = ctx.clean_prefix
 
-        usage = f"{prefix}{group.qualified_name} {group.usage}"
+        if group.usage is None:
+            usage = f"{prefix}{group.qualified_name}"
+        else:
+            usage = f"{prefix}{group.qualified_name} {group.usage}"
+
         embed.title = f"{GATO_NERD_EMOTE} `{usage}`"
 
         if group.aliases:
@@ -94,7 +98,11 @@ class IHelpCommand(HelpCommand):
         embed = create_embed(command.help, author=ctx.author)
         prefix = ctx.clean_prefix
 
-        usage = f"{prefix}{command.qualified_name} {command.usage}"
+        if command.usage is None:
+            usage = f"{prefix}{command.qualified_name}"
+        else:
+            usage = f"{prefix}{command.qualified_name} {command.usage}"
+
         embed.title = f"{GATO_NERD_EMOTE} `{usage}`"
 
         if command.aliases:
