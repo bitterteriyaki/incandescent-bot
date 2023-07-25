@@ -19,7 +19,6 @@ from random import randint
 from typing import Dict, Optional, cast
 
 from discord import Member, Message, Role, TextChannel
-from discord.ext import commands
 from discord.ext.commands import (  # type: ignore
     Author,
     BucketType,
@@ -27,9 +26,10 @@ from discord.ext.commands import (  # type: ignore
     CooldownMapping,
     Greedy,
     hybrid_group,
+    is_owner,
 )
 from humanize import intcomma
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert  # type: ignore
 
 from bot.core import IBot
@@ -247,7 +247,7 @@ class Levels(Cog, name="Ranking"):
 
     # Listeners
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self) -> None:
         get_role = self.bot.guild.get_role
         value = {k: get_role(v) for k, v in LEVELS_MAPPING.items()}
@@ -256,7 +256,15 @@ class Levels(Cog, name="Ranking"):
         # when they reach a certain level
         self.mapping = cast(Dict[int, Role], value)
 
-    @commands.Cog.listener()
+    @Cog.listener()
+    async def on_member_remove(self, member: Member) -> None:
+        # If a member leaves the server, then we delete their entry in
+        # the database so that they don't take up space.
+        async with self.bot.engine.begin() as conn:
+            stmt = delete(LevelUser).where(LevelUser.user_id == member.id)
+            await conn.execute(stmt)
+
+    @Cog.listener()
     async def on_regular_message(self, message: Message) -> None:
         author = cast(Member, message.author)
         channel = cast(TextChannel, message.channel)
@@ -328,7 +336,7 @@ class Levels(Cog, name="Ranking"):
         await ctx.reply(embed=embed)
 
     @exp.command(name="add", usage="<usuários...> <quantidade>")
-    @commands.is_owner()
+    @is_owner()
     async def exp_add(
         self,
         ctx: IContext,
@@ -355,7 +363,7 @@ class Levels(Cog, name="Ranking"):
         await ctx.reply(f"Adicionado `{exp}` de experiência para {mentions}.")
 
     @exp.command(name="remove", usage="<usuários...> <quantidade>")
-    @commands.is_owner()
+    @is_owner()
     async def exp_remove(
         self,
         ctx: IContext,
@@ -382,7 +390,7 @@ class Levels(Cog, name="Ranking"):
         await ctx.reply(f"Removido `{exp}` de experiência de {mentions}.")
 
     @exp.command(name="set", usage="<usuários...> <quantidade>")
-    @commands.is_owner()
+    @is_owner()
     async def exp_set(
         self,
         ctx: IContext,
