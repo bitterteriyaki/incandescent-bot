@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.0 (2023-07-25)
+
+### Feat
+
+- **ext/levels**: Remove the user from the database when they leaves the guild
+- **ext/economy**: Initial economy system
+
 ## 0.13.0 (2023-07-21)
 
 ### Feat
