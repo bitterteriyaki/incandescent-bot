@@ -11,13 +11,13 @@ repos:
       args:
         - "--maxkb=850"
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: 3.5.2
+    rev: 3.5.4
     hooks:
       - id: commitizen
       - id: commitizen-branch
         stages: [push]
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
         language_version: python3.11
@@ -26,11 +26,11 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.316
+    rev: v1.1.318
     hooks:
     - id: pyright
       additional_dependencies:
