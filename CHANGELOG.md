@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.1 (2023-07-31)
+
+### Fix
+
+- **ext/fun**: fix error when the bot tries to get a member which left the server
+
 ## 0.14.0 (2023-07-25)
 
 ### Feat

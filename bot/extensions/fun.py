@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import List, cast
+from typing import List, Union, cast
 
 from aiocron import crontab  # type: ignore
-from discord import Member, Role, TextChannel
+from discord import Member, Role, TextChannel, User
 from discord.ext.commands import Cog  # type: ignore
 from discord.utils import cached_property
 from humanize import intcomma
@@ -52,6 +52,27 @@ class Fun(Cog):
     def chatty_role(self) -> Role:
         return cast(Role, self.bot.guild.get_role(CHATTY_ROLE_ID))
 
+    async def getch_member(self, user_id: int) -> Union[Member, User]:
+        """Get a user from the guild, fetching it as an user if
+        necessary.
+
+        Parameters
+        ----------
+        user_id: :class:`int`
+            The user ID to get the member from.
+
+        Returns
+        -------
+        :class:`discord.Member`
+            The member from the guild.
+        """
+        member = self.bot.guild.get_member(user_id)
+
+        if member is None:
+            member = await self.bot.fetch_user(user_id)
+
+        return member
+
     async def chatty_event(self) -> None:
         members: List[str] = []
 
@@ -69,7 +90,7 @@ class Fun(Cog):
             result = (await conn.execute(stmt)).all()
 
         for idx, row in enumerate(result, start=1):
-            member = cast(Member, self.bot.guild.get_member(row[0]))
+            member = await self.getch_member(row[0])
             total = intcomma(row[1])
 
             content = f"**{idx}.** {member.mention} ({total} mensagens)"
