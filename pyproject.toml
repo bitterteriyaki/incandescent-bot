@@ -17,7 +17,7 @@ asyncpg = "^0.27.0"
 psutil = "^5.9.5"
 humanize = "^4.7.0"
 aiocron = "^1.8"
-pillow = "^10.0.0"
+pillow = "^10.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.3.3"
